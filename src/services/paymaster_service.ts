@@ -15,7 +15,7 @@ const createBundlerClientInstance = async (
   // Use provided paymaster RPC URL or default
   const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
 
-  const account = await accountService.getSmartAccount();
+  const account = await accountService.getSmartAccount(selectedChain, selectedPaymasterRpcUrl);
 
   logger.info(`Creating bundler client for account: ${account.address}`);
   logger.info(`Using chain ID: ${selectedChain.id}`);

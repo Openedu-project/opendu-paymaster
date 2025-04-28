@@ -1,15 +1,9 @@
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, Chain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { toCoinbaseSmartAccount } from 'viem/account-abstraction';
 import { config } from '../config';
 import { abi } from '../constants/abi';
 import { logger } from '../utils/logger';
-
-// Create public client
-const client = createPublicClient({
-  chain: config.blockchain.chain,
-  transport: http(config.blockchain.paymasterRpcUrl),
-});
 
 // Create owner account from private key
 const createOwnerAccount = () => {
@@ -20,7 +14,22 @@ const createOwnerAccount = () => {
 };
 
 // Create smart account
-const createSmartAccount = async () => {
+const createSmartAccount = async (
+  chain?: Chain,
+  paymasterRpcUrl?: string
+) => {
+  // Use provided chain or default
+  const selectedChain = chain || config.blockchain.defaultChain;
+
+  // Use provided paymaster RPC URL or default
+  const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
+
+  // Create public client with the selected chain and RPC URL
+  const client = createPublicClient({
+    chain: selectedChain,
+    transport: http(selectedPaymasterRpcUrl),
+  });
+
   const owner = createOwnerAccount();
 
   logger.info(`Creating smart account for owner: ${owner.address}`);
@@ -35,7 +44,23 @@ const createSmartAccount = async () => {
   return account;
 };
 
-const checkMinterRole = async (accountAddress: string) => {
+const checkMinterRole = async (
+  accountAddress: string,
+  chain?: Chain,
+  paymasterRpcUrl?: string
+) => {
+  // Use provided chain or default
+  const selectedChain = chain || config.blockchain.defaultChain;
+
+  // Use provided paymaster RPC URL or default
+  const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
+
+  // Create public client with the selected chain and RPC URL
+  const client = createPublicClient({
+    chain: selectedChain,
+    transport: http(selectedPaymasterRpcUrl),
+  });
+
   logger.info(`Checking if account ${accountAddress} is the owner of the contract`);
 
   try {
@@ -60,5 +85,5 @@ const checkMinterRole = async (accountAddress: string) => {
 
 export const accountService = {
   getSmartAccount: createSmartAccount,
-  checkMinterRole, 
+  checkMinterRole,
 };
