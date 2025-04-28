@@ -1,0 +1,22 @@
+{
+  "name": "openedu-paymaster",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "hono": "^4.0.0",
+    "viem": "2.x",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "bun-types": "latest",
+    "typescript": "^5.3.3"
+  }
+}
