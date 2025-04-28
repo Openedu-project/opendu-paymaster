@@ -1,9 +1,11 @@
 import 'dotenv/config';
-import { baseSepolia } from 'viem/chains';
+import { base, baseSepolia } from 'viem/chains';
 import { defineChain } from 'viem';
 
-// Use a custom Base Sepolia chain with a working RPC URL
-// The standard baseSepolia chain's RPC URL (https://sepolia.base.org) seems to be unreachable
+// Check if we're using mainnet or testnet
+const isMainnet = process.env.IS_MAIN === 'true';
+
+// Use a custom Base Sepolia chain with a working RPC URL for testnet
 const customBaseSepolia = defineChain({
   ...baseSepolia,
   rpcUrls: {
@@ -16,13 +18,29 @@ const customBaseSepolia = defineChain({
   },
 });
 
-// The Coinbase Paymaster API expects the chain ID to be 84532 for Base Sepolia
-// Make sure the chain ID in the baseSepolia object matches this value
-console.log('Using Base Sepolia chain with ID:', customBaseSepolia.id);
+// Use the Base mainnet chain for mainnet
+const customBase = defineChain({
+  ...base,
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.base.org', 'https://base-mainnet.public.blastapi.io'],
+    },
+    public: {
+      http: ['https://mainnet.base.org', 'https://base-mainnet.public.blastapi.io'],
+    },
+  },
+});
+
+// Select the appropriate chain based on the environment
+const selectedChain = isMainnet ? customBase : customBaseSepolia;
+
+// Log which network we're using
+console.log(`Using ${isMainnet ? 'Base Mainnet' : 'Base Sepolia Testnet'} with chain ID: ${selectedChain.id}`);
 
 export const blockchainConfig = {
   paymasterRpcUrl: process.env.PAYMASTER_RPC_URL || '',
   privateKey: process.env.PRIVATE_KEY || '',
   nftContractAddress: process.env.NFT_CONTRACT_ADDRESS || '0x0f61205637D02A0799d981A4d9547751a74fB9fC',
-  chain: customBaseSepolia,
+  chain: selectedChain,
+  isMainnet,
 };
