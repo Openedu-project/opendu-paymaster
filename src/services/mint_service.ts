@@ -7,15 +7,27 @@ import { MintNFTRequest, MintNFTResponse } from '../dto/mint';
 import { logger } from '../utils/logger';
 
 const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
+  // Determine if we're using mainnet or testnet
+  const isMainnet = request.is_main !== undefined ? request.is_main : config.blockchain.defaultIsMainnet;
+  const networkName = isMainnet ? 'Base Mainnet' : 'Base Sepolia Testnet';
+
   logger.info(`Minting NFT for receiver: ${request.receiver_address}, token URI: ${request.token_uri}`);
+  logger.info(`Using network: ${networkName}`);
 
   try {
-    const { bundlerClient, account } = await paymasterService.createBundlerClient();
+    // Get the chain and paymaster URL based on the is_main parameter
+    const chain = config.blockchain.getChain(isMainnet);
+    const paymasterRpcUrl = config.blockchain.getPaymasterRpcUrl(isMainnet);
+
+    // Create a bundler client with the smart account
+    const { bundlerClient, account } = await paymasterService.createBundlerClient(chain, paymasterRpcUrl);
     logger.info(`Using smart account: ${account.address}`);
 
     const publicClient = createPublicClient({
-      chain: config.blockchain.chain,
-      transport: http('https://base-sepolia-rpc.publicnode.com'),
+      chain,
+      transport: http(isMainnet
+        ? 'https://base-mainnet.public.blastapi.io'
+        : 'https://base-sepolia-rpc.publicnode.com'),
     });
 
     logger.info(`Attempting to mint with smart account: ${account.address}`);
@@ -85,10 +97,19 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
       hash: userOpHash,
     });
 
+    // Determine the appropriate block explorer URLs based on the network
+    const blockscoutUrl = isMainnet
+      ? `https://base.blockscout.com/op/${receipt.userOpHash}`
+      : `https://base-sepolia.blockscout.com/op/${receipt.userOpHash}`;
+
+    const basescanUrl = isMainnet
+      ? `https://basescan.org/address/${account.address}`
+      : `https://sepolia.basescan.org/address/${account.address}`;
+
     logger.info(`Transaction hash: ${receipt.receipt.transactionHash}`);
     logger.info(`✅ Transaction successfully sponsored!`);
-    logger.info(`⛽ View sponsored UserOperation on blockscout: https://base-sepolia.blockscout.com/op/${receipt.userOpHash}`);
-    logger.info(`🔍 View NFT mint on basescan: https://sepolia.basescan.org/address/${account.address}`);
+    logger.info(`⛽ View sponsored UserOperation on blockscout: ${blockscoutUrl}`);
+    logger.info(`🔍 View NFT mint on basescan: ${basescanUrl}`);
 
     return {
       status: 'success',
@@ -97,6 +118,7 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
       block_number: receipt.receipt.blockNumber.toString(),
       block_hash: receipt.receipt.blockHash,
       timestamp: Date.now(),
+      network: networkName,
     };
   } catch (error) {
     logger.error('Error minting NFT:', error);

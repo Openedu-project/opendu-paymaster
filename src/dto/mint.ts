@@ -1,6 +1,7 @@
 export interface MintNFTRequest {
   receiver_address: string;
   token_uri: string;
+  is_main?: boolean;
 }
 
 export interface MintNFTResponse {
@@ -11,4 +12,5 @@ export interface MintNFTResponse {
   block_number?: string;
   block_hash?: string;
   timestamp: number;
+  network: string; 
 }
