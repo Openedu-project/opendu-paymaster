@@ -13,6 +13,7 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
 
   logger.info(`Minting NFT for receiver: ${request.receiver_address}, token URI: ${request.token_uri}`);
   logger.info(`Using network: ${networkName}`);
+  logger.info(`is_main parameter value: ${request.is_main}, isMainnet value: ${isMainnet}`);
 
   try {
     // Get the chain and paymaster URL based on the is_main parameter
