@@ -5,6 +5,6 @@ import mintRouter from './mint';
 const router = new Hono();
 
 router.route('/health', healthRouter);
-router.route('/mint', mintRouter);
+router.route('/mint-nft', mintRouter);
 
 export default router;
