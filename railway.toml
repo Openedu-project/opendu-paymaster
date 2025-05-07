@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "apt-get update && apt-get install -y unzip && curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL=\"$HOME/.bun\" && export PATH=\"$BUN_INSTALL/bin:$PATH\" && source ~/.bashrc && bun install && bun run build"
+buildCommand = "apt-get update && apt-get install -y unzip && curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash && ln -s /usr/local/bin/bun /usr/bin/bun && bun install && bun run build"
 
 [deploy]
-startCommand = "bun run start"
+startCommand = "BUN_INSTALL=/usr/local bun run start"
 healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
