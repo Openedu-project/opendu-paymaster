@@ -108,6 +108,41 @@ bun run build
 bun start
 ```
 
+## Deployment
+
+### Railway.app
+
+1. Fork this repository to your GitHub account
+2. Create a new project on [Railway.app](https://railway.app)
+3. Connect your GitHub repository
+4. Add the following environment variables:
+   ```
+   API_KEY=your_api_key_here
+   PAYMASTER_API_KEY=your_paymaster_api_key
+   PRIVATE_KEY=your_private_key_without_0x_prefix
+   IS_MAIN=false
+   ```
+5. Deploy the project
+
+The service will be automatically deployed and available at your Railway.app URL.
+
+### Docker
+
+1. Build the Docker image:
+```bash
+docker build -t openedu-paymaster .
+```
+
+2. Run the container:
+```bash
+docker run -p 8080:8080 \
+  -e API_KEY=your_api_key_here \
+  -e PAYMASTER_API_KEY=your_paymaster_api_key \
+  -e PRIVATE_KEY=your_private_key_without_0x_prefix \
+  -e IS_MAIN=false \
+  openedu-paymaster
+```
+
 ## Technical Details
 
 ### Architecture
