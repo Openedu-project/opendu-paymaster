@@ -7,7 +7,7 @@ A TypeScript microservice built with Bun and Hono to implement Account Abstracti
 - Account Abstraction (ERC-4337) support
 - Gas fee sponsoring via Coinbase Paymaster
 - NFT minting on Base network
-- RESTful API with authentication
+- RESTful API
 
 ## API Endpoints
 
@@ -34,8 +34,6 @@ Response:
 
 ```
 POST /api/v1/mint
-Headers:
-  X-API-Key: your_api_key_here
 Body:
 {
   "receiver_address": "0x7f4A3Fe909524CEa8C91fFdEf717C797581AE36D",
@@ -92,7 +90,6 @@ PORT=8080
 PAYMASTER_RPC_URL=your_paymaster_rpc_url
 PRIVATE_KEY=your_private_key_without_0x_prefix
 NFT_CONTRACT_ADDRESS=0x0f61205637D02A0799d981A4d9547751a74fB9fC
-API_KEY=your_api_key_here
 ```
 
 ### Running the Service
@@ -117,7 +114,6 @@ bun start
 3. Connect your GitHub repository
 4. Add the following environment variables:
    ```
-   API_KEY=your_api_key_here
    PAYMASTER_API_KEY=your_paymaster_api_key
    PRIVATE_KEY=your_private_key_without_0x_prefix
    IS_MAIN=false
@@ -136,7 +132,6 @@ docker build -t openedu-paymaster .
 2. Run the container:
 ```bash
 docker run -p 8080:8080 \
-  -e API_KEY=your_api_key_here \
   -e PAYMASTER_API_KEY=your_paymaster_api_key \
   -e PRIVATE_KEY=your_private_key_without_0x_prefix \
   -e IS_MAIN=false \
