@@ -18,7 +18,7 @@ app.use('*', loggerMiddleware);
 app.route('/api/v1', apiV1);
 
 // start server
-const port = config.app.port || 8080;
+const port = process.env.PORT ? parseInt(process.env.PORT) : config.app.port;
 console.log(`Server is running on port ${port}`);
 
 export default {
