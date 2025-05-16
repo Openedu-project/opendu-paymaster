@@ -21,10 +21,8 @@ const createSmartAccount = async (
   // Use provided chain or default
   const selectedChain = chain || config.blockchain.defaultChain;
 
-  // Use provided paymaster RPC URL or default
   const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
 
-  // Create public client with the selected chain and RPC URL
   const client = createPublicClient({
     chain: selectedChain,
     transport: http(selectedPaymasterRpcUrl),
@@ -47,7 +45,8 @@ const createSmartAccount = async (
 const checkMinterRole = async (
   accountAddress: string,
   chain?: Chain,
-  paymasterRpcUrl?: string
+  paymasterRpcUrl?: string,
+  isMainnet: boolean = false
 ) => {
   // Use provided chain or default
   const selectedChain = chain || config.blockchain.defaultChain;
@@ -55,7 +54,8 @@ const checkMinterRole = async (
   // Use provided paymaster RPC URL or default
   const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
 
-  // Create public client with the selected chain and RPC URL
+  const nftContractAddress = config.blockchain.getNftContractAddress(isMainnet);
+
   const client = createPublicClient({
     chain: selectedChain,
     transport: http(selectedPaymasterRpcUrl),
@@ -65,7 +65,7 @@ const checkMinterRole = async (
 
   try {
     const owner = await client.readContract({
-      address: config.blockchain.nftContractAddress as `0x${string}`,
+      address: nftContractAddress as `0x${string}`,
       abi: abi,
       functionName: 'owner',
       args: [],

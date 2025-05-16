@@ -8,12 +8,12 @@ import { logger } from '../utils/logger';
 
 const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
   // Determine if we're using mainnet or testnet
-  const isMainnet = request.is_main !== undefined ? request.is_main : config.blockchain.defaultIsMainnet;
+  const isMainnet = request.is_main === true; // Default to false (testnet) if not specified
   const networkName = isMainnet ? 'Base Mainnet' : 'Base Sepolia Testnet';
 
   logger.info(`Minting NFT for receiver: ${request.receiver_address}, token URI: ${request.token_uri}`);
   logger.info(`Using network: ${networkName}`);
-  logger.info(`is_main parameter value: ${request.is_main}, isMainnet value: ${isMainnet}`);
+  logger.info(`is_main parameter value: ${request.is_main}`);
 
   try {
     // Get the chain and paymaster URL based on the is_main parameter
@@ -34,8 +34,11 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
     logger.info(`Attempting to mint with smart account: ${account.address}`);
 
     try {
+      // Get the appropriate NFT contract address based on the network
+      const nftContractAddress = config.blockchain.getNftContractAddress(isMainnet);
+
       const currentOwner = await publicClient.readContract({
-        address: config.blockchain.nftContractAddress as `0x${string}`,
+        address: nftContractAddress as `0x${string}`,
         abi,
         functionName: 'owner',
       }) as `0x${string}`;
@@ -73,6 +76,9 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
 
     logger.info('Sending user operation to mint NFT');
 
+    // Get the appropriate NFT contract address based on the network
+    const nftContractAddress = config.blockchain.getNftContractAddress(isMainnet);
+
     // Send user operation to mint NFT
     const userOpHash = await bundlerClient.sendUserOperation({
       account,
@@ -80,7 +86,7 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
         {
           abi: abi,
           functionName: 'mint',
-          to: config.blockchain.nftContractAddress as `0x${string}`,
+          to: nftContractAddress as `0x${string}`,
           args: [
             request.receiver_address,
             request.token_uri,
@@ -92,13 +98,11 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
 
     logger.info(`User operation hash: ${userOpHash}`);
 
-    // Wait for receipt
     logger.info('Waiting for user operation receipt');
     const receipt = await bundlerClient.waitForUserOperationReceipt({
       hash: userOpHash,
     });
 
-    // Determine the appropriate block explorer URLs based on the network
     const blockscoutUrl = isMainnet
       ? `https://base.blockscout.com/op/${receipt.userOpHash}`
       : `https://base-sepolia.blockscout.com/op/${receipt.userOpHash}`;

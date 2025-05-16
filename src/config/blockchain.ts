@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { base, baseSepolia } from 'viem/chains';
 import { defineChain, Chain } from 'viem';
 
-// Use a custom Base Sepolia chain with a working RPC URL for testnet
 const customBaseSepolia = defineChain({
   ...baseSepolia,
   rpcUrls: {
@@ -15,7 +14,6 @@ const customBaseSepolia = defineChain({
   },
 });
 
-// Use the Base mainnet chain for mainnet
 const customBase = defineChain({
   ...base,
   rpcUrls: {
@@ -28,18 +26,13 @@ const customBase = defineChain({
   },
 });
 
-// Default to testnet if not specified
-const defaultIsMainnet = process.env.IS_MAIN === 'true';
-
-// Function to get the appropriate chain based on the is_main parameter
-const getChain = (isMain: boolean = defaultIsMainnet): Chain => {
+const getChain = (isMain: boolean): Chain => {
   const chain = isMain ? customBase : customBaseSepolia;
   console.log(`Using ${isMain ? 'Base Mainnet' : 'Base Sepolia Testnet'} with chain ID: ${chain.id}`);
   return chain;
 };
 
-// Function to get the appropriate Paymaster RPC URL based on the is_main parameter
-const getPaymasterRpcUrl = (isMain: boolean = defaultIsMainnet): string => {
+const getPaymasterRpcUrl = (isMain: boolean): string => {
   const apiKey = process.env.PAYMASTER_API_KEY || '';
 
   if (!apiKey) {
@@ -51,13 +44,19 @@ const getPaymasterRpcUrl = (isMain: boolean = defaultIsMainnet): string => {
     : `https://api.developer.coinbase.com/rpc/v1/base-sepolia/${apiKey}`;
 };
 
+// Function to get the appropriate NFT contract address based on the network
+const getNftContractAddress = (isMain: boolean): string => {
+  return isMain
+    ? process.env.NFT_CONTRACT_ADDRESS_MAINNET || '0xNULL'
+    : process.env.NFT_CONTRACT_ADDRESS_TESTNET || '0x0f61205637D02A0799d981A4d9547751a74fB9fC';
+};
+
 export const blockchainConfig = {
   paymasterApiKey: process.env.PAYMASTER_API_KEY || '',
   paymasterRpcUrl: process.env.PAYMASTER_RPC_URL || '',
   privateKey: process.env.PRIVATE_KEY || '',
-  nftContractAddress: process.env.NFT_CONTRACT_ADDRESS || '0x0f61205637D02A0799d981A4d9547751a74fB9fC',
-  defaultChain: getChain(),
+  defaultChain: getChain(false), 
   getChain,
   getPaymasterRpcUrl,
-  defaultIsMainnet,
+  getNftContractAddress,
 };
