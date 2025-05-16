@@ -12,7 +12,9 @@
     "paths": {
       "@/*": ["*"]
     },
-    "types": ["bun-types"]
+    "types": ["bun-types", "node"],
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

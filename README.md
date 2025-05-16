@@ -151,6 +151,36 @@ The service will be automatically deployed and available at your Railway.app URL
 
 ### Docker
 
+#### Using Docker Compose (Recommended)
+
+1. Create a `.env` file with your environment variables:
+
+```bash
+cp .env.example .env
+```
+
+2. Edit the `.env` file with your configuration.
+
+3. Build and start the container:
+
+```bash
+docker-compose up -d
+```
+
+4. View logs:
+
+```bash
+docker-compose logs -f
+```
+
+5. Stop the container:
+
+```bash
+docker-compose down
+```
+
+#### Using Docker Directly
+
 1. Build the Docker image:
 
 ```bash
@@ -167,7 +197,23 @@ docker run -p 8088:8088 \
   -e NFT_CONTRACT_ADDRESS_MAINNET=your_mainnet_nft_contract_address_here \
   -e NFT_CONTRACT_ADDRESS_TESTNET=your_testnet_nft_contract_address_here \
   -e ALLOWED_ORIGINS=https://your-frontend-domain.com \
+  -v $(pwd)/logs:/app/logs \
+  --name openedu-paymaster \
+  --restart unless-stopped \
   openedu-paymaster
+```
+
+3. View logs:
+
+```bash
+docker logs -f openedu-paymaster
+```
+
+4. Stop the container:
+
+```bash
+docker stop openedu-paymaster
+docker rm openedu-paymaster
 ```
 
 ## Technical Details
