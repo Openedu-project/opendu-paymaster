@@ -21,7 +21,7 @@ const mintNFT = async (request: MintNFTRequest): Promise<MintNFTResponse> => {
     const paymasterRpcUrl = config.blockchain.getPaymasterRpcUrl(isMainnet);
 
     // Create a bundler client with the smart account
-    const { bundlerClient, account } = await paymasterService.createBundlerClient(chain, paymasterRpcUrl);
+    const { bundlerClient, account } = await paymasterService.createBundlerClient(chain, paymasterRpcUrl, isMainnet);
     logger.info(`Using smart account: ${account.address}`);
 
     const publicClient = createPublicClient({

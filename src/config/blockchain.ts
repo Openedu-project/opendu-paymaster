@@ -54,8 +54,14 @@ const getNftContractAddress = (isMain: boolean): string => {
 export const blockchainConfig = {
   paymasterApiKey: process.env.PAYMASTER_API_KEY || '',
   paymasterRpcUrl: process.env.PAYMASTER_RPC_URL || '',
-  privateKey: process.env.PRIVATE_KEY || '',
-  defaultChain: getChain(false), 
+  privateKeyMainnet: process.env.PRIVATE_KEY_MAINNET || '',
+  privateKeyTestnet: process.env.PRIVATE_KEY_TESTNET || '',
+  getPrivateKey: (isMain: boolean): string => {
+    return isMain
+      ? process.env.PRIVATE_KEY_MAINNET || ''
+      : process.env.PRIVATE_KEY_TESTNET || '';
+  },
+  defaultChain: getChain(false),
   getChain,
   getPaymasterRpcUrl,
   getNftContractAddress,

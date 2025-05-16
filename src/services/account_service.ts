@@ -6,17 +6,19 @@ import { abi } from '../constants/abi';
 import { logger } from '../utils/logger';
 
 // Create owner account from private key
-const createOwnerAccount = () => {
-  if (!config.blockchain.privateKey) {
-    throw new Error('Private key is not configured');
+const createOwnerAccount = (isMainnet: boolean = false) => {
+  const privateKey = config.blockchain.getPrivateKey(isMainnet);
+  if (!privateKey) {
+    throw new Error(`Private key for ${isMainnet ? 'mainnet' : 'testnet'} is not configured`);
   }
-  return privateKeyToAccount(`0x${config.blockchain.privateKey}`);
+  return privateKeyToAccount(`0x${privateKey}`);
 };
 
 // Create smart account
 const createSmartAccount = async (
   chain?: Chain,
-  paymasterRpcUrl?: string
+  paymasterRpcUrl?: string,
+  isMainnet: boolean = false
 ) => {
   // Use provided chain or default
   const selectedChain = chain || config.blockchain.defaultChain;
@@ -28,9 +30,9 @@ const createSmartAccount = async (
     transport: http(selectedPaymasterRpcUrl),
   });
 
-  const owner = createOwnerAccount();
+  const owner = createOwnerAccount(isMainnet);
 
-  logger.info(`Creating smart account for owner: ${owner.address}`);
+  logger.info(`Creating smart account for owner: ${owner.address} on ${isMainnet ? 'mainnet' : 'testnet'}`);
 
   const account = await toCoinbaseSmartAccount({
     client,

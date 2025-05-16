@@ -7,7 +7,8 @@ import { logger } from '../utils/logger';
 // create bundler client
 const createBundlerClientInstance = async (
   chain?: Chain,
-  paymasterRpcUrl?: string
+  paymasterRpcUrl?: string,
+  isMainnet: boolean = false
 ) => {
   // Use provided chain or default
   const selectedChain = chain || config.blockchain.defaultChain;
@@ -15,7 +16,7 @@ const createBundlerClientInstance = async (
   // Use provided paymaster RPC URL or default
   const selectedPaymasterRpcUrl = paymasterRpcUrl || config.blockchain.paymasterRpcUrl;
 
-  const account = await accountService.getSmartAccount(selectedChain, selectedPaymasterRpcUrl);
+  const account = await accountService.getSmartAccount(selectedChain, selectedPaymasterRpcUrl, isMainnet);
 
   logger.info(`Creating bundler client for account: ${account.address}`);
   logger.info(`Using chain ID: ${selectedChain.id}`);
