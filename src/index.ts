@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import { config } from './config';
@@ -22,7 +23,8 @@ app.route('/api/v1', apiV1);
 const port = process.env.PORT ? parseInt(process.env.PORT) : config.app.port;
 console.log(`Server is running on port ${port}`);
 
-export default {
-  port,
-  fetch: app.fetch
-};
+// Start the server
+serve({
+  fetch: app.fetch,
+  port
+});
