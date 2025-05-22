@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
@@ -12,7 +12,7 @@
     "paths": {
       "@/*": ["*"]
     },
-    "types": ["bun-types", "node"],
+    "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },

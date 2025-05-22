@@ -1,18 +1,17 @@
 {
   "name": "openedu-paymaster",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir ./dist",
-    "test": "bun test",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "test": "jest",
     "pm2:start": "pm2 start ecosystem.config.cjs --env production",
     "pm2:stop": "pm2 stop ecosystem.config.cjs",
     "pm2:restart": "pm2 restart ecosystem.config.cjs",
     "pm2:status": "pm2 status",
     "pm2:logs": "pm2 logs",
-    "deploy": "bun run build && bun run pm2:start",
+    "deploy": "npm run build && npm run pm2:start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -23,7 +22,11 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.18",
-    "bun-types": "latest",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
   }
 }

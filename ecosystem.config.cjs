@@ -8,6 +8,7 @@ module.exports = {
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',
+      node_args: '--experimental-specifier-resolution=node',
       env: {
         NODE_ENV: 'development',
       },
@@ -16,7 +17,7 @@ module.exports = {
         PORT: 8006,
       },
       log_date_format: 'YYYY-MM-DD HH:mm:ss',
-      merge_logs: true,
+      merge_logs: true
     },
   ],
 };
