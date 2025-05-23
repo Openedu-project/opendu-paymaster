@@ -2,6 +2,10 @@
 # Install pm2 global-env cli 
 sudo npm install -g pm2
 
+# Environment Setup
+cp env.example .env
+# Edit .env with your configuration
+
 # Build 
 npm run build
 
